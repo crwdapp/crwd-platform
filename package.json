@@ -1,0 +1,44 @@
+{
+  "name": "crwd-platform",
+  "version": "1.0.0",
+  "description": "CRWD Platform - Bar discovery and management platform",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --recursive run dev",
+    "build": "pnpm --recursive run build",
+    "test": "pnpm --recursive run test",
+    "lint": "pnpm --recursive run lint",
+    "clean": "pnpm --recursive run clean",
+    "type-check": "pnpm --recursive run type-check",
+    "dev:user-app": "pnpm --filter user-app dev",
+    "dev:admin-dashboard": "pnpm --filter admin-dashboard dev",
+    "dev:bar-dashboard": "pnpm --filter bar-dashboard dev",
+    "dev:marketing-site": "pnpm --filter marketing-site dev",
+    "dev:mvp": "pnpm --filter mvp dev",
+    "dev:auth-user": "pnpm --filter auth-user-service dev",
+    "dev:auth-bar": "pnpm --filter auth-bar-service dev",
+    "dev:auth-admin": "pnpm --filter auth-admin-service dev",
+    "dev:drinks": "pnpm --filter drinks-service dev",
+    "dev:events": "pnpm --filter events-service dev",
+    "dev:payments": "pnpm --filter payments-service dev",
+    "dev:analytics": "pnpm --filter analytics-service dev",
+    "dev:frontend": "pnpm --filter \"./apps/*\" dev",
+    "dev:backend": "pnpm --filter \"./backend/*\" dev",
+    "install:all": "pnpm install",
+    "update:all": "pnpm update --recursive",
+    "outdated": "pnpm outdated --recursive"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "prettier": "^3.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
