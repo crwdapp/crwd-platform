@@ -1,0 +1,41 @@
+{
+  "name": "crwd-backend",
+  "version": "1.0.0",
+  "description": "CRWD Platform Backend Services - Phase 1",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --recursive run dev",
+    "build": "pnpm --recursive run build",
+    "start": "pnpm --recursive run start",
+    "clean": "pnpm --recursive run clean",
+    "type-check": "pnpm --recursive run type-check",
+    "db:generate": "cd database && pnpm prisma:generate",
+    "db:push": "cd database && pnpm prisma:push",
+    "db:migrate": "cd database && pnpm prisma:migrate",
+    "db:studio": "cd database && pnpm prisma:studio",
+    "db:seed": "cd database && pnpm seed",
+    "db:reset": "cd database && pnpm prisma:reset",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "docker-compose restart",
+    "setup": "pnpm install && pnpm db:generate && pnpm docker:up && pnpm db:push && pnpm db:seed",
+    "dev:auth": "pnpm --filter auth-user-service dev"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "dependencies": {
+    "pg": "^8.10.0"
+  }
+}

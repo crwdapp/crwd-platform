@@ -1,0 +1,192 @@
+// This is your Prisma schema file for CRWD Platform Database
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "./docs/ERD.svg"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// CRWD Platform - Complete Database Schema
+// ========================================
+
+// User Management - Phase 1 Foundation
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  firstName     String
+  lastName      String
+  phone         String?
+  isVerified    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  role          UserRole @default(USER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lastLoginAt   DateTime?
+
+  // Relations
+  sessions      AuthSession[]
+  profile       UserProfile?
+  bars          Bar[]        // Bar owners
+  events        Event[]      // Event creators
+  campaigns     Campaign[]   // Campaign creators
+  analytics     Analytics[]  // User analytics
+
+  @@map("users")
+}
+
+model UserProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  bio         String?
+  location    String?
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// Authentication - Phase 1 Foundation
+model AuthSession {
+  id           String   @id @default(cuid())
+  userId       String
+  token        String   @unique
+  refreshToken String   @unique
+  expiresAt    DateTime
+  ipAddress    String?
+  userAgent    String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  lastUsedAt   DateTime @default(now())
+
+  // Relations
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("auth_sessions")
+}
+
+// Bar Management - Phase 2
+model Bar {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  address     String
+  city        String
+  country     String
+  latitude    Float?
+  longitude   Float?
+  phone       String?
+  website     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  events      Event[]
+  drinks      Drink[]
+  campaigns   Campaign[]
+
+  @@map("bars")
+}
+
+// Event Management - Phase 2
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  barId       String
+  bar         Bar      @relation(fields: [barId], references: [id], onDelete: Cascade)
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@map("events")
+}
+
+// Drink Management - Phase 2
+model Drink {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  category    String
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  barId       String
+  bar         Bar      @relation(fields: [barId], references: [id], onDelete: Cascade)
+
+  @@map("drinks")
+}
+
+// Campaign Management - Phase 3
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  budget      Float?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  barId       String
+  bar         Bar      @relation(fields: [barId], references: [id], onDelete: Cascade)
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  analytics   Analytics[]
+
+  @@map("campaigns")
+}
+
+// Analytics - Phase 3
+model Analytics {
+  id          String   @id @default(cuid())
+  type        String   // 'user', 'bar', 'event', 'campaign'
+  metric      String   // 'views', 'clicks', 'conversions', etc.
+  value       Float
+  date        DateTime
+  createdAt   DateTime @default(now())
+
+  // Relations
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@map("analytics")
+}
+
+// Enums
+enum UserRole {
+  USER
+  BAR_OWNER
+  ADMIN
+  SUPER_ADMIN
+}

@@ -9,6 +9,12 @@ import rateLimit from 'express-rate-limit';
 // Load environment variables
 dotenv.config();
 
+// Import routes
+import authRoutes from './routes/auth';
+
+// Import error handling
+import { AuthError, ValidationError, DatabaseError } from './utils/errors';
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -21,8 +27,8 @@ app.use(cors({
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api/', limiter);
@@ -39,33 +45,30 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
     service: 'auth-user-service',
+    phase: '1',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
 });
 
 // API routes
-app.use('/api/auth', (req, res) => {
-  res.json({
-    message: 'User authentication service is running',
-    endpoints: [
-      'POST /api/auth/register',
-      'POST /api/auth/login',
-      'POST /api/auth/refresh',
-      'POST /api/auth/logout',
-      'POST /api/auth/forgot-password',
-      'POST /api/auth/reset-password',
-      'POST /api/auth/verify-email'
-    ]
-  });
-});
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
+
+  if (err instanceof AuthError || err instanceof ValidationError || err instanceof DatabaseError) {
+    return res.status(err.statusCode).json({
+      error: err.name,
+      message: err.message,
+      details: err.details || undefined
+    });
+  }
+
   res.status(500).json({
-    error: 'Something went wrong!',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong!'
   });
 });
 
@@ -79,7 +82,7 @@ app.use('*', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 User Authentication Service running on port ${PORT}`);
+  console.log(`🚀 Auth Service (Phase 1) running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🔐 API endpoints: http://localhost:${PORT}/api/auth`);
 });

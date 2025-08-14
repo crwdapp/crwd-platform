@@ -1,0 +1,24 @@
+{
+  "name": "crwd-database",
+  "version": "1.0.0",
+  "description": "CRWD Platform Database Management",
+  "private": true,
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "prisma:reset": "prisma migrate reset",
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.0.0",
+    "tsx": "^3.12.0",
+    "@types/bcryptjs": "^2.4.0",
+    "prisma-erd-generator": "^1.0.0"
+  }
+}

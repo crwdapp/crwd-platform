@@ -1,7 +1,7 @@
 {
   "name": "auth-user-service",
   "version": "1.0.0",
-  "description": "User authentication microservice for CRWD Platform",
+  "description": "User authentication microservice for CRWD Platform - Phase 1",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -25,8 +25,9 @@
     "nodemailer": "^6.9.0",
     "redis": "^4.6.0",
     "pg": "^8.10.0",
-    "typeorm": "^0.3.0",
-    "reflect-metadata": "^0.1.13"
+    "@prisma/client": "^5.0.0",
+    "reflect-metadata": "^0.1.13",
+    "zod": "^3.22.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",
