@@ -1,0 +1,22 @@
+export declare const isObjectEmpty: (obj: any) => boolean;
+export declare const isObjectNotEmpty: (obj: any) => boolean;
+export declare const pick: <T extends object, K extends keyof T>(obj: T, keys: K[]) => Pick<T, K>;
+export declare const omit: <T extends object, K extends keyof T>(obj: T, keys: K[]) => Omit<T, K>;
+export declare const keys: <T extends object>(obj: T) => (keyof T)[];
+export declare const values: <T extends object>(obj: T) => T[keyof T][];
+export declare const entries: <T extends object>(obj: T) => [keyof T, T[keyof T]][];
+export declare const fromEntries: <T>(entries: [string, T][]) => Record<string, T>;
+export declare const assign: <T extends object, U extends object>(target: T, source: U) => T & U;
+export declare const merge: <T extends object, U extends object>(target: T, source: U) => T & U;
+export declare const deepClone: <T>(obj: T) => T;
+export declare const get: <T>(obj: any, path: string, defaultValue?: T) => T | undefined;
+export declare const set: <T>(obj: any, path: string, value: T) => T;
+export declare const has: (obj: any, path: string) => boolean;
+export declare const unset: (obj: any, path: string) => boolean;
+export declare const invert: <T extends Record<string, any>>(obj: T) => Record<string, string>;
+export declare const mapKeys: <T extends object, U extends string>(obj: T, fn: (value: T[keyof T], key: keyof T) => U) => Record<U, T[keyof T]>;
+export declare const mapValues: <T extends object, U>(obj: T, fn: (value: T[keyof T], key: keyof T) => U) => Record<keyof T, U>;
+export declare const transform: <T extends object, U>(obj: T, fn: (value: T[keyof T], key: keyof T) => U) => U[];
+export declare const defaults: <T extends object>(obj: T, ...sources: Partial<T>[]) => T;
+export declare const defaultsDeep: <T extends object>(obj: T, ...sources: Partial<T>[]) => T;
+//# sourceMappingURL=object.d.ts.map

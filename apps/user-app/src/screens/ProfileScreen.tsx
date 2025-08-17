@@ -6,11 +6,13 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useAppStore } from '../store';
 import { BottomNavigation } from '../components/BottomNavigation';
+import { TokenService } from '../services/tokenService';
 
 type RootStackParamList = {
   Account: undefined;
@@ -18,6 +20,7 @@ type RootStackParamList = {
   RecentVisits: undefined;
   QRCode: undefined;
   BarDetail: { barId: number };
+  Login: undefined;
 };
 
 export const ProfileScreen: React.FC = () => {
@@ -60,6 +63,55 @@ export const ProfileScreen: React.FC = () => {
     subscriptionPrice: '49 RON/month',
   };
 
+  const handleLogout = async () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // Get stored token for logout API call
+              const token = await TokenService.getToken();
+              
+              // Call logout API
+              const response = await fetch('http://192.168.1.14:3001/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(token && { 'Authorization': `Bearer ${token}` }),
+                },
+              });
+
+              if (response.ok) {
+                console.log('Logout successful');
+              } else {
+                console.log('Logout failed:', response.status);
+              }
+            } catch (error) {
+              console.error('Logout error:', error);
+            }
+
+            // Clear all authentication data
+            await TokenService.clearAuthData();
+            
+            // Navigate to login screen
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' as any }],
+            });
+          },
+        },
+      ]
+    );
+  };
+
   const menuItems = [
     {
       id: 'account',
@@ -88,6 +140,13 @@ export const ProfileScreen: React.FC = () => {
       description: 'Your personal QR code for bars',
       icon: 'qr-code',
       action: () => navigation.navigate('QRCode'),
+    },
+    {
+      id: 'logout',
+      title: 'Logout',
+      description: 'Sign out of your account',
+      icon: 'log-out',
+      action: handleLogout,
     },
   ];
 
@@ -155,15 +214,30 @@ export const ProfileScreen: React.FC = () => {
       {menuItems.map((item) => (
         <TouchableOpacity
           key={item.id}
-          style={styles.menuItem}
+          style={[
+            styles.menuItem,
+            item.id === 'logout' && styles.logoutMenuItem
+          ]}
           onPress={item.action}
         >
           <View style={styles.menuItemLeft}>
-            <View style={styles.menuIcon}>
-              <Icon name={item.icon as any} size={20} color="#5bc0be" />
+            <View style={[
+              styles.menuIcon,
+              item.id === 'logout' && styles.logoutIcon
+            ]}>
+              <Icon 
+                name={item.icon as any} 
+                size={20} 
+                color={item.id === 'logout' ? '#FF6B6B' : '#5bc0be'} 
+              />
             </View>
             <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>{item.title}</Text>
+              <Text style={[
+                styles.menuTitle,
+                item.id === 'logout' && styles.logoutTitle
+              ]}>
+                {item.title}
+              </Text>
               <Text style={styles.menuDescription}>{item.description}</Text>
             </View>
           </View>
@@ -335,6 +409,16 @@ const styles = StyleSheet.create({
   menuDescription: {
     fontSize: 12,
     color: '#666666',
+  },
+  logoutMenuItem: {
+    borderColor: 'rgba(255, 107, 107, 0.3)',
+    backgroundColor: 'rgba(255, 107, 107, 0.05)',
+  },
+  logoutIcon: {
+    backgroundColor: 'rgba(255, 107, 107, 0.2)',
+  },
+  logoutTitle: {
+    color: '#FF6B6B',
   },
   faqSection: {
     marginBottom: 32,

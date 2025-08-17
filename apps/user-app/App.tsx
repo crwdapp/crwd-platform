@@ -25,16 +25,29 @@ import { QRCodeScreen } from './src/screens/QRCodeScreen';
 import { DrinkSelectionScreen } from './src/screens/DrinkSelectionScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
+<<<<<<< Updated upstream
 import { LoadingScreen } from './src/screens/LoadingScreen';
+=======
+>>>>>>> Stashed changes
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 type RootStackParamList = {
+<<<<<<< Updated upstream
   Auth: undefined;
   Main: undefined;
   Login: undefined;
   Register: undefined;
+=======
+  Login: undefined;
+  Register: undefined;
+  Main: undefined;
+  Discover: undefined;
+  Events: undefined;
+  Profile: undefined;
+  Account: undefined;
+>>>>>>> Stashed changes
   BarDetail: { barId: number };
   Filter: undefined;
   LocationSelection: undefined;
@@ -138,7 +151,9 @@ const AppContent = () => {
         screenOptions={{
           headerShown: false,
         }}
+        initialRouteName="Login"
       >
+<<<<<<< Updated upstream
         {isAuthenticated ? (
           // Authenticated user - show main app
           <>
@@ -159,6 +174,22 @@ const AppContent = () => {
           // Not authenticated - show auth screens
           <Stack.Screen name="Auth" component={AuthStack} />
         )}
+=======
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Main" component={TabNavigator} />
+        <Stack.Screen name="BarDetail" component={BarDetailScreen} />
+        <Stack.Screen name="Filter" component={FilterScreen} />
+        <Stack.Screen name="LocationSelection" component={LocationSelectionScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="RecentVisits" component={RecentVisitsScreen} />
+        <Stack.Screen name="AccountPassword" component={AccountPasswordScreen} />
+        <Stack.Screen name="AccountPhone" component={AccountPhoneScreen} />
+        <Stack.Screen name="AccountPayment" component={AccountPaymentScreen} />
+        <Stack.Screen name="AccountSubscription" component={AccountSubscriptionScreen} />
+        <Stack.Screen name="QRCode" component={QRCodeScreen} />
+        <Stack.Screen name="DrinkSelection" component={DrinkSelectionScreen} />
+>>>>>>> Stashed changes
       </Stack.Navigator>
     </NavigationContainer>
   );
