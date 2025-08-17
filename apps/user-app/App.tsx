@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'react-native';
 import * as Location from 'expo-location';
 import { useAppStore } from './src/store';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 
 // Screens
 import { DiscoverScreen } from './src/screens/DiscoverScreen';
@@ -22,15 +23,18 @@ import { AccountPaymentScreen } from './src/screens/AccountPaymentScreen';
 import { AccountSubscriptionScreen } from './src/screens/AccountSubscriptionScreen';
 import { QRCodeScreen } from './src/screens/QRCodeScreen';
 import { DrinkSelectionScreen } from './src/screens/DrinkSelectionScreen';
+import { LoginScreen } from './src/screens/LoginScreen';
+import { RegisterScreen } from './src/screens/RegisterScreen';
+import { LoadingScreen } from './src/screens/LoadingScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 type RootStackParamList = {
-  Discover: undefined;
-  Events: undefined;
-  Profile: undefined;
-  Account: undefined;
+  Auth: undefined;
+  Main: undefined;
+  Login: undefined;
+  Register: undefined;
   BarDetail: { barId: number };
   Filter: undefined;
   LocationSelection: undefined;
@@ -60,7 +64,22 @@ const TabNavigator = () => {
   );
 };
 
-export default function App() {
+const AuthStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const AppContent = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
   // Get store functions with error handling
   const getUpdateUserLocation = () => {
     try {
@@ -108,6 +127,10 @@ export default function App() {
     initializeLocation();
   }, []);
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <NavigationContainer>
       <StatusBar barStyle="light-content" backgroundColor="#0A0A0A" />
@@ -116,19 +139,35 @@ export default function App() {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Main" component={TabNavigator} />
-        <Stack.Screen name="BarDetail" component={BarDetailScreen} />
-        <Stack.Screen name="Filter" component={FilterScreen} />
-        <Stack.Screen name="LocationSelection" component={LocationSelectionScreen} />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
-        <Stack.Screen name="RecentVisits" component={RecentVisitsScreen} />
-        <Stack.Screen name="AccountPassword" component={AccountPasswordScreen} />
-        <Stack.Screen name="AccountPhone" component={AccountPhoneScreen} />
-        <Stack.Screen name="AccountPayment" component={AccountPaymentScreen} />
-        <Stack.Screen name="AccountSubscription" component={AccountSubscriptionScreen} />
-        <Stack.Screen name="QRCode" component={QRCodeScreen} />
-        <Stack.Screen name="DrinkSelection" component={DrinkSelectionScreen} />
+        {isAuthenticated ? (
+          // Authenticated user - show main app
+          <>
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="BarDetail" component={BarDetailScreen} />
+            <Stack.Screen name="Filter" component={FilterScreen} />
+            <Stack.Screen name="LocationSelection" component={LocationSelectionScreen} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            <Stack.Screen name="RecentVisits" component={RecentVisitsScreen} />
+            <Stack.Screen name="AccountPassword" component={AccountPasswordScreen} />
+            <Stack.Screen name="AccountPhone" component={AccountPhoneScreen} />
+            <Stack.Screen name="AccountPayment" component={AccountPaymentScreen} />
+            <Stack.Screen name="AccountSubscription" component={AccountSubscriptionScreen} />
+            <Stack.Screen name="QRCode" component={QRCodeScreen} />
+            <Stack.Screen name="DrinkSelection" component={DrinkSelectionScreen} />
+          </>
+        ) : (
+          // Not authenticated - show auth screens
+          <Stack.Screen name="Auth" component={AuthStack} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
