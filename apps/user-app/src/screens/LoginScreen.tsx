@@ -9,17 +9,18 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useAuthStore } from '../store/authStore';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { TokenService } from '../services/tokenService';
 
-export const LoginScreen = () => {
+interface LoginScreenProps {
+  navigation: any;
+}
+
+export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation();
-  const { login } = useAuthStore();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -29,85 +30,111 @@ export const LoginScreen = () => {
 
     setIsLoading(true);
     try {
-      await login(email, password);
-      // Navigation will be handled by the auth store
+      const response = await fetch('http://192.168.1.14:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store tokens and user data
+        await TokenService.storeTokens({
+          token: data.token,
+          refreshToken: data.refreshToken,
+          expiresAt: data.expiresAt,
+        });
+        await TokenService.storeUser(data.user);
+        
+        console.log('Login successful:', data);
+        Alert.alert('Success', 'Login successful!');
+        // Navigate to main app
+        navigation.replace('Main');
+      } else {
+        Alert.alert('Error', data.message || 'Login failed');
+      }
     } catch (error) {
-      Alert.alert('Login Failed', error instanceof Error ? error.message : 'Please try again');
+      console.error('Login error:', error);
+      Alert.alert('Error', 'Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleRegister = () => {
-    navigation.navigate('Register' as never);
+    navigation.navigate('Register');
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to your CRWD account</Text>
-        </View>
-
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Enter your email"
-              placeholderTextColor="#666"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Welcome to CRWD</Text>
+            <Text style={styles.subtitle}>Sign in to your account</Text>
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Enter your password"
-              placeholderTextColor="#666"
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+              onPress={handleLogin}
+              disabled={isLoading}
+            >
+              <Text style={styles.loginButtonText}>
+                {isLoading ? 'Signing in...' : 'Sign In'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+              <Text style={styles.registerButtonText}>
+                Don't have an account? Sign up
+              </Text>
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.loginButtonText}>Sign In</Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.registerLink} onPress={handleRegister}>
-            <Text style={styles.registerText}>
-              Don't have an account? <Text style={styles.registerTextBold}>Sign Up</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            By signing in, you agree to our Terms of Service and Privacy Policy
-          </Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <View style={styles.testCredentials}>
+            <Text style={styles.testTitle}>Test Credentials:</Text>
+            <Text style={styles.testText}>Email: test@crwd.com</Text>
+            <Text style={styles.testText}>Password: test123</Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -116,84 +143,88 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0A0A0A',
   },
-  scrollContainer: {
+  keyboardView: {
+    flex: 1,
+  },
+  scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 40,
+    padding: 20,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: 40,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
+    color: '#888888',
   },
   form: {
-    marginBottom: 32,
+    marginBottom: 40,
   },
   inputContainer: {
     marginBottom: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   input: {
     backgroundColor: '#1A1A1A',
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    padding: 16,
     fontSize: 16,
-    color: '#fff',
+    color: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: '#333333',
   },
   loginButton: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: '#007AFF',
     borderRadius: 12,
-    paddingVertical: 16,
+    padding: 16,
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 24,
+    marginTop: 20,
   },
   loginButtonDisabled: {
-    opacity: 0.6,
+    backgroundColor: '#666666',
   },
   loginButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
-  registerLink: {
+  registerButton: {
     alignItems: 'center',
+    marginTop: 20,
   },
-  registerText: {
+  registerButtonText: {
+    color: '#007AFF',
+    fontSize: 16,
+  },
+  testCredentials: {
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 20,
+  },
+  testTitle: {
     fontSize: 14,
-    color: '#999',
-  },
-  registerTextBold: {
-    color: '#FF6B35',
     fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 8,
   },
-  footer: {
-    alignItems: 'center',
-  },
-  footerText: {
+  testText: {
     fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: 18,
+    color: '#888888',
+    marginBottom: 4,
   },
 });
 
