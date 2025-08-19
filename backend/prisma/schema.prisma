@@ -1,0 +1,288 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  avatar    String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  reviews     Review[]
+  createdEvents Event[] @relation("EventCreator")
+  attendances EventAttendance[]
+  bookmarks   EventBookmark[]
+  tokens      Token[]
+  visits      Visit[]
+  comments    EventComment[]
+
+  @@map("users")
+}
+
+model Bar {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  address     String
+  lat         Float
+  lng         Float
+  phone       String?
+  priceRange  String?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  isOpen      Boolean  @default(true)
+  crowdLevel  String?
+  openUntil   String?
+  images      String[]
+  tags        String[]
+  type        String?
+  availableDrinks Int  @default(0)
+  drinksServedToday Int @default(0)
+  totalTokensRedeemed Int @default(0)
+  lastUpdated DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  hours       BarHours[]
+  drinks      Drink[]
+  events      Event[]
+  reviews     Review[]
+  visits      Visit[]
+
+  @@map("bars")
+}
+
+model BarHours {
+  id     String @id @default(cuid())
+  barId  String
+  day    String // "monday", "tuesday", etc.
+  open   String
+  close  String
+  
+  bar    Bar    @relation(fields: [barId], references: [id], onDelete: Cascade)
+
+  @@unique([barId, day])
+  @@map("bar_hours")
+}
+
+model Drink {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  category      String
+  image         String?
+  alcoholContent String?
+  volume        String?
+  originalPrice String?
+  tokenCost     Int      @default(0)
+  isAvailable   Boolean  @default(true)
+  barId         String
+  
+  bar           Bar      @relation(fields: [barId], references: [id], onDelete: Cascade)
+  eventDrinks   EventDrink[]
+
+  @@map("drinks")
+}
+
+model Event {
+  id                    String        @id @default(cuid())
+  name                  String
+  description           String
+  date                  DateTime
+  startTime             String
+  endTime               String
+  dj                    String?
+  genre                 String?
+  price                 Float?
+  ticketPrice           Float?
+  image                 String
+  images                String[]
+  category              EventCategory
+  tags                  String[]
+  capacity              Int
+  attendees             Int           @default(0)
+  interestedCount       Int           @default(0)
+  goingCount            Int           @default(0)
+  isTicketed            Boolean       @default(false)
+  ticketUrl             String?
+  status                EventStatus   @default(UPCOMING)
+  ageRestriction        String?
+  dressCode             String?
+  isPublic              Boolean       @default(true)
+  canGuestsInviteFriends Boolean      @default(true)
+  hostMessage           String?
+  discussionEnabled     Boolean       @default(true)
+  photosEnabled         Boolean       @default(true)
+  views                 Int           @default(0)
+  shares                Int           @default(0)
+  createdBy             String
+  coHosts               String[]
+  barId                 String
+  
+  bar                   Bar            @relation(fields: [barId], references: [id], onDelete: Cascade)
+  creator               User           @relation("EventCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  attendances           EventAttendance[]
+  bookmarks             EventBookmark[]
+  comments              EventComment[]
+  updates               EventUpdate[]
+  eventDrinks           EventDrink[]
+
+  @@map("events")
+}
+
+model EventDrink {
+  id                String @id @default(cuid())
+  eventId           String
+  drinkId           String
+  tokenCost         Int
+  totalQuantity     Int
+  maxTokensPerUser  Int
+  remainingQuantity Int
+  specialOffer      String?
+  
+  event             Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  drink             Drink  @relation(fields: [drinkId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, drinkId])
+  @@map("event_drinks")
+}
+
+model EventAttendance {
+  id       String @id @default(cuid())
+  userId   String
+  eventId  String
+  status   AttendanceStatus
+  createdAt DateTime @default(now())
+  
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@map("event_attendances")
+}
+
+model EventBookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@map("event_bookmarks")
+}
+
+model EventComment {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  content   String
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("event_comments")
+}
+
+model EventUpdate {
+  id        String        @id @default(cuid())
+  eventId   String
+  title     String
+  content   String
+  type      UpdateType
+  isFromHost Boolean      @default(false)
+  createdAt DateTime      @default(now())
+  
+  event     Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_updates")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  barId     String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bar       Bar      @relation(fields: [barId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, barId])
+  @@map("reviews")
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tokens")
+}
+
+model Visit {
+  id        String   @id @default(cuid())
+  userId    String
+  barId     String
+  visitedAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bar       Bar      @relation(fields: [barId], references: [id], onDelete: Cascade)
+
+  @@map("visits")
+}
+
+enum EventCategory {
+  MUSIC
+  PARTY
+  HAPPY_HOUR
+  LIVE_SHOW
+  KARAOKE
+  TRIVIA
+  SPORTS
+  NETWORKING
+  SPECIAL
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+  SOLD_OUT
+}
+
+enum AttendanceStatus {
+  GOING
+  INTERESTED
+  NOT_GOING
+}
+
+enum UpdateType {
+  ANNOUNCEMENT
+  REMINDER
+  CHANGE
+  CANCELLATION
+}
