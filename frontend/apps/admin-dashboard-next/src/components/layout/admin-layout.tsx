@@ -29,6 +29,7 @@ import {
   Search,
   User,
   LogOut,
+  Wine,
 } from "lucide-react"
 
 const navigation = [
@@ -37,8 +38,6 @@ const navigation = [
   { name: "Events", href: "/events", icon: Calendar },
   { name: "Users", href: "/users", icon: Users },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Campaigns", href: "/campaigns", icon: TrendingUp },
-  { name: "Settings", href: "/settings", icon: Settings },
 ]
 
 export default function AdminLayout({

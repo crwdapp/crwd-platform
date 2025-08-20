@@ -8,6 +8,8 @@ import { errorHandler, notFound } from './middleware/errorHandler'
 import userRoutes from './routes/users'
 import barRoutes from './routes/bars'
 import eventRoutes from './routes/events'
+import reviewRoutes from './routes/reviews'
+import analyticsRoutes from './routes/analytics'
 
 // Load environment variables
 dotenv.config()
@@ -30,7 +32,7 @@ app.use(limiter)
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://yourdomain.com'] 
-    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8081'],
+    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:8081'],
   credentials: true
 }))
 
@@ -58,8 +60,8 @@ app.get('/api', (req, res) => {
       users: '/api/users',
       bars: '/api/bars',
       events: '/api/events',
-      drinks: '/api/drinks',
-      reviews: '/api/reviews'
+      reviews: '/api/reviews',
+      analytics: '/api/analytics'
     },
     documentation: 'API documentation coming soon...'
   })
@@ -69,6 +71,8 @@ app.get('/api', (req, res) => {
 app.use('/api/users', userRoutes)
 app.use('/api/bars', barRoutes)
 app.use('/api/events', eventRoutes)
+app.use('/api/reviews', reviewRoutes)
+app.use('/api/analytics', analyticsRoutes)
 
 // 404 handler
 app.use(notFound)

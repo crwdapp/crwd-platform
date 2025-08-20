@@ -19,4 +19,10 @@ router.delete('/:id', auth, barController.deleteBar)
 router.put('/:id/hours', auth, barController.updateBarHours)
 router.post('/:barId/visit', auth, barController.addBarVisit)
 
+// Bar Drinks Management
+router.get('/:barId/drinks', barController.getBarDrinks)
+router.post('/:barId/drinks', auth, barController.addDrinkToBar)
+router.put('/:barId/drinks/:drinkId', auth, barController.updateBarDrink)
+router.delete('/:barId/drinks/:drinkId', auth, barController.deleteBarDrink)
+
 export default router

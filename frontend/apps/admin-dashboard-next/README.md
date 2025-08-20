@@ -1,220 +1,216 @@
 # CRWD Admin Dashboard
 
-A modern, responsive admin dashboard built with Next.js 14, TypeScript, and shadcn/ui components. This dashboard provides comprehensive management tools for the CRWD platform, including user management, bar management, event tracking, analytics, and campaign management.
+The central brain of the CRWD platform - a comprehensive administrative interface for managing users, bars, events, drinks, and analytics.
 
 ## 🚀 Features
 
-### Core Features
-- **Modern UI/UX**: Built with shadcn/ui components and Tailwind CSS
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **TypeScript**: Full type safety throughout the application
-- **Next.js 14**: Latest features including App Router and Server Components
-- **Real-time Analytics**: Interactive charts and data visualization with Recharts
-- **Search & Filtering**: Advanced search capabilities across all data tables
-- **Dark/Light Mode**: Theme switching capability (ready for implementation)
+### Core Management
+- **Users Management**: Create, update, delete, and manage user accounts
+- **Bars Management**: Manage bar profiles, hours, information, and drink menus
+- **Events Management**: Create and manage events across all bars
+- **Reviews Management**: Monitor and moderate user reviews
 
-### Dashboard Sections
-- **Overview Dashboard**: Key metrics, charts, and recent activity
-- **Bars Management**: Complete CRUD operations for partner bars
-- **Events Management**: Event creation, tracking, and analytics
-- **Users Management**: User profiles, roles, and activity tracking
-- **Analytics**: Comprehensive data visualization and insights
-- **Campaigns**: Marketing campaign management and performance tracking
-- **Settings**: User preferences, privacy settings, and system configuration
+### Analytics & Insights
+- **Real-time Analytics**: Platform performance metrics
+- **User Demographics**: Age distribution and user behavior
+- **Bar Performance**: Revenue and event analytics by bar
+- **Event Analytics**: Event creation and attendance trends
+- **Revenue Tracking**: Monthly revenue and growth metrics
 
-## 🛠️ Tech Stack
+### Advanced Features
+- **Search & Filter**: Advanced search across all entities
+- **Bulk Operations**: Mass actions for efficiency
+- **Real-time Updates**: Live data synchronization
+- **Export Capabilities**: Data export for reporting
+- **Responsive Design**: Works on desktop and mobile
 
-### Frontend
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type-safe JavaScript
-- **Tailwind CSS** - Utility-first CSS framework
-- **shadcn/ui** - Beautiful, accessible component library
-- **Lucide React** - Modern icon library
-- **Recharts** - Composable charting library
-- **Zustand** - Lightweight state management
-- **React Hook Form** - Performant forms with validation
-- **Zod** - TypeScript-first schema validation
+## 🛠️ Technology Stack
 
-### UI Components
-- **Radix UI** - Headless UI primitives
-- **Class Variance Authority** - Component variant management
-- **Tailwind Merge** - Utility for merging Tailwind classes
-- **Sonner** - Toast notifications
+- **Frontend**: Next.js 15, React 18, TypeScript
+- **UI Components**: Radix UI, Tailwind CSS
+- **Charts**: Recharts for data visualization
+- **State Management**: Zustand
+- **Forms**: React Hook Form with Zod validation
+- **API**: RESTful API with fetch
 
-## 📁 Project Structure
+## 📦 Installation
 
-```
-src/
-├── app/                    # Next.js App Router pages
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Dashboard home
-│   ├── bars/              # Bars management
-│   ├── events/            # Events management
-│   ├── users/             # Users management
-│   ├── analytics/         # Analytics dashboard
-│   ├── campaigns/         # Campaigns management
-│   └── settings/          # Settings page
-├── components/            # Reusable components
-│   ├── ui/               # shadcn/ui components
-│   ├── layout/           # Layout components
-│   ├── dashboard/        # Dashboard-specific components
-│   ├── bars/             # Bars management components
-│   ├── events/           # Events management components
-│   ├── users/            # Users management components
-│   ├── analytics/        # Analytics components
-│   ├── campaigns/        # Campaigns components
-│   └── settings/         # Settings components
-├── lib/                  # Utility functions
-│   └── utils.ts          # Common utilities
-└── types/                # TypeScript type definitions
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
+1. **Install dependencies**:
    ```bash
    cd frontend/apps/admin-dashboard-next
-   ```
-
-2. **Install dependencies**
-   ```bash
    npm install
    ```
 
-3. **Start the development server**
+2. **Set up environment variables**:
+   Create a `.env.local` file:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:3000/api
+   ```
+
+3. **Start the development server**:
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
-   Navigate to [http://localhost:3002](http://localhost:3002)
+4. **Open your browser**:
+   Navigate to `http://localhost:3002`
+
+## 🏗️ Project Structure
+
+```
+src/
+├── app/                    # Next.js app router pages
+│   ├── analytics/         # Analytics dashboard
+│   ├── bars/             # Bars management (including drink menus)
+│   ├── events/           # Events management
+│   └── users/            # Users management
+├── components/           # Reusable UI components
+│   ├── analytics/        # Analytics-specific components
+│   ├── bars/            # Bars management components (including drinks)
+│   ├── events/          # Events management components
+│   ├── layout/          # Layout components
+│   ├── ui/              # Base UI components
+│   └── users/           # Users management components
+├── lib/                 # Utility libraries
+│   ├── api.ts          # API service layer
+│   └── utils.ts        # Utility functions
+└── types/              # TypeScript type definitions
+```
+
+## 🔌 API Integration
+
+The admin dashboard connects to the backend API through the `api.ts` service layer:
+
+### Available Endpoints
+
+- **Users**: `/api/users`
+- **Bars**: `/api/bars` (including `/api/bars/:id/drinks` for drink management)
+- **Events**: `/api/events`
+- **Reviews**: `/api/reviews`
+- **Analytics**: `/api/analytics`
+
+### API Features
+
+- **Error Handling**: Comprehensive error handling with custom ApiError class
+- **Type Safety**: Full TypeScript support for all API responses
+- **Query Parameters**: Support for search, pagination, and filtering
+- **Authentication**: JWT-based authentication (to be implemented)
+
+## 📊 Analytics Dashboard
+
+The analytics dashboard provides comprehensive insights into platform performance:
+
+### Key Metrics
+- **Total Users**: Platform user count and growth
+- **Active Bars**: Number of registered bars
+- **Events Created**: Event creation trends
+- **Monthly Revenue**: Revenue tracking and projections
+
+### Charts & Visualizations
+- **Growth Trends**: Line charts showing platform growth
+- **User Demographics**: Pie charts for age distribution
+- **Bar Performance**: Bar charts for revenue comparison
+- **Event Categories**: Distribution of event types
+
+## 🔐 Authentication & Security
+
+### Planned Features
+- **JWT Authentication**: Secure admin access
+- **Role-based Access**: Different permission levels
+- **Session Management**: Secure session handling
+- **Audit Logging**: Track all admin actions
+
+### Security Measures
+- **CORS Configuration**: Proper cross-origin settings
+- **Rate Limiting**: API rate limiting protection
+- **Input Validation**: Zod schema validation
+- **XSS Protection**: Content Security Policy
+
+## 🎨 UI/UX Features
+
+### Design System
+- **Consistent Components**: Reusable UI components
+- **Responsive Design**: Mobile-first approach
+- **Dark Mode**: Theme support (planned)
+- **Accessibility**: WCAG 2.1 compliance
+
+### User Experience
+- **Intuitive Navigation**: Clear navigation structure
+- **Search & Filter**: Advanced search capabilities
+- **Bulk Actions**: Efficient mass operations
+- **Real-time Updates**: Live data synchronization
+
+## 🚀 Deployment
+
+### Production Build
+```bash
+npm run build
+npm start
+```
+
+### Environment Variables
+```env
+NEXT_PUBLIC_API_URL=https://api.yourdomain.com
+NODE_ENV=production
+```
+
+### Docker Support
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3002
+CMD ["npm", "start"]
+```
+
+## 🔧 Development
 
 ### Available Scripts
-
-- `npm run dev` - Start development server on port 3002
+- `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
-## 🎨 Design System
+### Code Style
+- **TypeScript**: Strict type checking
+- **ESLint**: Code quality enforcement
+- **Prettier**: Code formatting
+- **Husky**: Git hooks for quality
 
-### Color Palette
-- **Primary**: Blue (#3b82f6)
-- **Success**: Green (#10b981)
-- **Warning**: Yellow (#f59e0b)
-- **Error**: Red (#ef4444)
-- **Neutral**: Gray scale
+## 📈 Roadmap
 
-### Typography
-- **Font**: Inter (Google Fonts)
-- **Weights**: 400, 500, 600, 700
+### Phase 1 (Current)
+- ✅ Basic CRUD operations for all entities
+- ✅ Analytics dashboard
+- ✅ Search and filtering
+- ✅ Responsive design
 
-### Components
-All components follow the shadcn/ui design system with:
-- Consistent spacing and sizing
-- Accessible color contrast
-- Responsive breakpoints
-- Dark mode support (ready)
+### Phase 2 (Next)
+- 🔄 Real-time updates with WebSocket
+- 🔄 Advanced analytics and reporting
+- 🔄 Bulk operations
+- 🔄 Export functionality
 
-## 📊 Data Visualization
-
-The dashboard includes comprehensive analytics with:
-- **Bar Charts** - Revenue and event comparisons
-- **Line Charts** - Growth trends over time
-- **Pie Charts** - User demographics and event categories
-- **Area Charts** - Platform growth visualization
-- **Progress Bars** - Campaign budget tracking
-
-## 🔧 Configuration
-
-### Environment Variables
-Create a `.env.local` file in the root directory:
-
-```env
-# Database Configuration
-DATABASE_URL=your_database_url
-
-# NextAuth Configuration
-NEXTAUTH_SECRET=your_nextauth_secret
-NEXTAUTH_URL=http://localhost:3002
-```
-
-### Tailwind Configuration
-The project uses a custom Tailwind configuration optimized for the design system:
-
-```javascript
-// tailwind.config.js
-module.exports = {
-  darkMode: ["class"],
-  content: ["./src/**/*.{ts,tsx}"],
-  theme: {
-    extend: {
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        // ... more custom colors
-      }
-    }
-  }
-}
-```
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Other Platforms
-The application can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
-
-## 🔒 Security
-
-- **Authentication**: Ready for NextAuth.js integration
-- **Authorization**: Role-based access control
-- **Data Validation**: Zod schema validation
-- **XSS Protection**: Built-in Next.js security features
-- **CSRF Protection**: Automatic CSRF token handling
-
-## 📱 Responsive Design
-
-The dashboard is fully responsive with breakpoints:
-- **Mobile**: < 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: > 1024px
-
-## 🎯 Performance
-
-- **Next.js Optimization**: Automatic code splitting and optimization
-- **Image Optimization**: Next.js Image component
-- **Bundle Analysis**: Built-in bundle analyzer
-- **Lazy Loading**: Component and route-based lazy loading
+### Phase 3 (Future)
+- 📋 Advanced user management
+- 📋 Bar partner portal integration
+- 📋 Mobile app management
+- 📋 Advanced security features
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is part of the CRWD platform and is proprietary software.
 
 ## 🆘 Support
 
@@ -223,14 +219,6 @@ For support and questions:
 - Contact the development team
 - Check the documentation
 
-## 🔄 Migration from Old Dashboard
-
-This Next.js version replaces the previous Vite-based admin dashboard with:
-- **Better Performance**: Server-side rendering and optimization
-- **Improved UX**: Modern component library and design system
-- **Enhanced Features**: More comprehensive analytics and management tools
-- **Better Maintainability**: TypeScript and modern development practices
-
 ---
 
-Built with ❤️ for the CRWD platform
+**CRWD Admin Dashboard** - The central brain of your platform 🧠

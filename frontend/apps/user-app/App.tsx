@@ -22,15 +22,11 @@ import { AccountPaymentScreen } from './src/screens/AccountPaymentScreen';
 import { AccountSubscriptionScreen } from './src/screens/AccountSubscriptionScreen';
 import { QRCodeScreen } from './src/screens/QRCodeScreen';
 import { DrinkSelectionScreen } from './src/screens/DrinkSelectionScreen';
-import { LoginScreen } from './src/screens/LoginScreen';
-import { RegisterScreen } from './src/screens/RegisterScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
   Main: undefined;
   Discover: undefined;
   Events: undefined;
@@ -121,10 +117,8 @@ const AppContent = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Login"
+        initialRouteName="Main"
       >
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Main" component={TabNavigator} />
         <Stack.Screen name="BarDetail" component={BarDetailScreen} />
         <Stack.Screen name="Filter" component={FilterScreen} />

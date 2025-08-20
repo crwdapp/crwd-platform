@@ -197,4 +197,77 @@ export class BarService {
       lastUpdated: bar.lastUpdated
     }
   }
+
+  // Bar Drinks Management
+  async getBarDrinks(barId: string, query: any) {
+    const { search, category, limit = 20, offset = 0 } = query
+
+    const where: any = {
+      barId
+    }
+
+    if (search) {
+      where.name = {
+        contains: search,
+        mode: 'insensitive'
+      }
+    }
+
+    if (category) {
+      where.category = category
+    }
+
+    const drinks = await prisma.drink.findMany({
+      where,
+      take: limit,
+      skip: offset,
+      orderBy: {
+        name: 'asc'
+      }
+    })
+
+    return drinks
+  }
+
+  async addDrinkToBar(barId: string, data: any) {
+    const drink = await prisma.drink.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        category: data.category,
+        isAvailable: data.isAvailable ?? true,
+        barId
+      }
+    })
+
+    return drink
+  }
+
+  async updateBarDrink(barId: string, drinkId: string, data: any) {
+    const drink = await prisma.drink.update({
+      where: {
+        id: drinkId,
+        barId // Ensure the drink belongs to the bar
+      },
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        category: data.category,
+        isAvailable: data.isAvailable
+      }
+    })
+
+    return drink
+  }
+
+  async deleteBarDrink(barId: string, drinkId: string) {
+    await prisma.drink.delete({
+      where: {
+        id: drinkId,
+        barId // Ensure the drink belongs to the bar
+      }
+    })
+  }
 }

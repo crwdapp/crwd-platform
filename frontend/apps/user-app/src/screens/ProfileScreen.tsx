@@ -20,7 +20,6 @@ type RootStackParamList = {
   RecentVisits: undefined;
   QRCode: undefined;
   BarDetail: { barId: number };
-  Login: undefined;
 };
 
 export const ProfileScreen: React.FC = () => {
@@ -65,47 +64,24 @@ export const ProfileScreen: React.FC = () => {
 
   const handleLogout = async () => {
     Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
+      'Clear Data',
+      'Are you sure you want to clear your local data?',
       [
         {
           text: 'Cancel',
           style: 'cancel',
         },
         {
-          text: 'Logout',
+          text: 'Clear',
           style: 'destructive',
           onPress: async () => {
             try {
-              // Get stored token for logout API call
-              const token = await TokenService.getToken();
-              
-              // Call logout API
-              const response = await fetch('http://192.168.1.14:3001/api/auth/logout', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  ...(token && { 'Authorization': `Bearer ${token}` }),
-                },
-              });
-
-              if (response.ok) {
-                console.log('Logout successful');
-              } else {
-                console.log('Logout failed:', response.status);
-              }
+              // Clear all authentication data
+              await TokenService.clearAuthData();
+              console.log('User data cleared');
             } catch (error) {
-              console.error('Logout error:', error);
+              console.error('Error clearing user data:', error);
             }
-
-            // Clear all authentication data
-            await TokenService.clearAuthData();
-            
-            // Navigate to login screen
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Login' as any }],
-            });
           },
         },
       ]
@@ -143,8 +119,8 @@ export const ProfileScreen: React.FC = () => {
     },
     {
       id: 'logout',
-      title: 'Logout',
-      description: 'Sign out of your account',
+      title: 'Clear Data',
+      description: 'Clear your local data',
       icon: 'log-out',
       action: handleLogout,
     },

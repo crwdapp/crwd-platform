@@ -95,4 +95,61 @@ export class BarController {
       res.status(400).json({ error: (error as Error).message })
     }
   }
+
+  // Bar Drinks Management
+  async getBarDrinks(req: Request, res: Response) {
+    try {
+      const { barId } = req.params
+      const drinks = await barService.getBarDrinks(barId, req.query as any)
+
+      res.json({ drinks })
+    } catch (error) {
+      res.status(400).json({ error: (error as Error).message })
+    }
+  }
+
+  async addDrinkToBar(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'User not authenticated' })
+      }
+
+      const { barId } = req.params
+      const drink = await barService.addDrinkToBar(barId, req.body)
+
+      res.status(201).json({ drink })
+    } catch (error) {
+      res.status(400).json({ error: (error as Error).message })
+    }
+  }
+
+  async updateBarDrink(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'User not authenticated' })
+      }
+
+      const { barId, drinkId } = req.params
+      const drink = await barService.updateBarDrink(barId, drinkId, req.body)
+
+      res.json({ drink })
+    } catch (error) {
+      res.status(400).json({ error: (error as Error).message })
+    }
+  }
+
+  async deleteBarDrink(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'User not authenticated' })
+      }
+
+      const { barId, drinkId } = req.params
+      await barService.deleteBarDrink(barId, drinkId)
+
+      res.json({ message: 'Drink deleted successfully' })
+    } catch (error) {
+      res.status(400).json({ error: (error as Error).message })
+    }
+  }
 }
