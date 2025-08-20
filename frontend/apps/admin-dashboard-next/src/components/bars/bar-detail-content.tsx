@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { DrinkCard, EventCard } from "@/components/ui/cards"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -266,7 +267,7 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
   
   const [isEditing, setIsEditing] = useState(false)
   const [activeTab, setActiveTab] = useState("overview")
-  const [editForm, setEditForm] = useState({
+  const [editForm, setEditForm] = useState(() => ({
     name: bar?.name || "",
     description: bar?.description || "",
     address: bar?.address || "",
@@ -274,7 +275,32 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
     priceRange: bar?.priceRange || "",
     type: bar?.type || "",
     isOpen: bar?.isOpen ?? true,
-  })
+    lat: bar?.lat || 0,
+    lng: bar?.lng || 0,
+    location: bar?.location || "",
+    rating: bar?.rating || 0,
+    reviews: bar?.reviews || 0,
+    availableDrinks: bar?.availableDrinks || 0,
+    crowdLevel: bar?.crowdLevel || "Medium",
+    tags: bar?.tags || [],
+    hours: bar?.hours as Record<string, string> || {},
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      website: ""
+    }
+  }))
+
+  // Function to toggle day status
+  const toggleDayStatus = (day: string) => {
+    setEditForm(prev => ({
+      ...prev,
+      hours: {
+        ...prev.hours,
+        [day]: prev.hours[day] === "Closed" ? "12:00 PM - 2:00 AM" : "Closed"
+      }
+    }))
+  }
 
   // Event management states
   const [showEventDialog, setShowEventDialog] = useState(false)
@@ -368,6 +394,20 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
       priceRange: bar.priceRange,
       type: bar.type,
       isOpen: bar.isOpen,
+      lat: bar.lat,
+      lng: bar.lng,
+      location: bar.location,
+      rating: bar.rating,
+      reviews: bar.reviews,
+      availableDrinks: bar.availableDrinks,
+      crowdLevel: bar.crowdLevel,
+      tags: bar.tags,
+      hours: bar.hours,
+      socialMedia: {
+        instagram: "",
+        facebook: "",
+        website: ""
+      }
     })
     setIsEditing(false)
   }
@@ -584,84 +624,486 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
 
       {/* Main Content */}
       <div className="px-6 py-8 lg:px-8 max-w-7xl mx-auto">
-        {isEditing ? (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Edit Bar Information</h3>
-              <p className="text-gray-600">Update bar details and settings</p>
-            </div>
-            <Card className="shadow-sm border-0">
-              <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Bar Name</label>
-                    <Input 
-                      value={editForm.name}
-                      onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                      className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Type</label>
-                    <Input 
-                      value={editForm.type}
-                      onChange={(e) => setEditForm({...editForm, type: e.target.value})}
-                      className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Address</label>
-                    <Input 
-                      value={editForm.address}
-                      onChange={(e) => setEditForm({...editForm, address: e.target.value})}
-                      className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Phone</label>
-                    <Input 
-                      value={editForm.phone}
-                      onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                      className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Price Range</label>
-                    <select 
-                      className="w-full p-3 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500"
-                      value={editForm.priceRange}
-                      onChange={(e) => setEditForm({...editForm, priceRange: e.target.value})}
-                    >
-                      <option value="$">$ (Inexpensive)</option>
-                      <option value="$$">$$ (Moderate)</option>
-                      <option value="$$$">$$$ (Expensive)</option>
-                      <option value="$$$$">$$$$ (Very Expensive)</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Status</label>
-                    <select 
-                      className="w-full p-3 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500"
-                      value={editForm.isOpen ? "open" : "closed"}
-                      onChange={(e) => setEditForm({...editForm, isOpen: e.target.value === "open"})}
-                    >
-                      <option value="open">Open</option>
-                      <option value="closed">Closed</option>
-                    </select>
-                  </div>
-                  <div className="md:col-span-2 space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Description</label>
-                    <textarea 
-                      value={editForm.description}
-                      onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500 h-24"
-                      placeholder="Describe your bar..."
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                 {isEditing ? (
+           <div className="space-y-8">
+             {/* Header */}
+             <div className="text-center">
+               <h3 className="text-3xl font-bold text-gray-900 mb-2">Edit Bar Information</h3>
+               <p className="text-gray-600 text-lg">Update and manage all aspects of {bar.name}</p>
+             </div>
+
+             {/* Main Edit Form */}
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+               {/* Left Column - Basic Info */}
+               <div className="lg:col-span-2 space-y-6">
+                                   {/* Basic Information Card */}
+                  <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50">
+                    <CardHeader className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white rounded-t-lg relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                      <div className="relative">
+                        <CardTitle className="flex items-center gap-3 text-xl font-bold">
+                          <div className="p-2 bg-white/20 rounded-lg">
+                            <Building2 className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold">Basic Information</div>
+                            <div className="text-indigo-100 text-sm font-normal">Manage bar details and settings</div>
+                          </div>
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                   <CardContent className="p-6">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <div className="space-y-2">
+                         <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                           <Building2 className="h-4 w-4 text-indigo-600" />
+                           Bar Name
+                         </label>
+                         <Input 
+                           value={editForm.name}
+                           onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                           className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 h-12 text-lg"
+                           placeholder="Enter bar name"
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                           <Tag className="h-4 w-4 text-indigo-600" />
+                           Type
+                         </label>
+                         <select 
+                           className="w-full h-12 p-3 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500 text-lg"
+                           value={editForm.type}
+                           onChange={(e) => setEditForm({...editForm, type: e.target.value})}
+                         >
+                           <option value="">Select type</option>
+                           <option value="Electronic Music Club">Electronic Music Club</option>
+                           <option value="Traditional Pub">Traditional Pub</option>
+                           <option value="Cocktail Bar">Cocktail Bar</option>
+                           <option value="Sports Bar">Sports Bar</option>
+                           <option value="Wine Bar">Wine Bar</option>
+                           <option value="Jazz Club">Jazz Club</option>
+                           <option value="Karaoke Bar">Karaoke Bar</option>
+                           <option value="Rooftop Bar">Rooftop Bar</option>
+                         </select>
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                           <MapPin className="h-4 w-4 text-indigo-600" />
+                           Address
+                         </label>
+                         <Input 
+                           value={editForm.address}
+                           onChange={(e) => setEditForm({...editForm, address: e.target.value})}
+                           className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 h-12"
+                           placeholder="Enter full address"
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                           <Phone className="h-4 w-4 text-indigo-600" />
+                           Phone
+                         </label>
+                         <Input 
+                           value={editForm.phone}
+                           onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
+                           className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 h-12"
+                           placeholder="+40 XXX XXX XXX"
+                         />
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                           <DollarSign className="h-4 w-4 text-indigo-600" />
+                           Price Range
+                         </label>
+                         <select 
+                           className="w-full h-12 p-3 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500"
+                           value={editForm.priceRange}
+                           onChange={(e) => setEditForm({...editForm, priceRange: e.target.value})}
+                         >
+                           <option value="$">$ (Inexpensive)</option>
+                           <option value="$$">$$ (Moderate)</option>
+                           <option value="$$$">$$$ (Expensive)</option>
+                           <option value="$$$$">$$$$ (Very Expensive)</option>
+                         </select>
+                       </div>
+                       <div className="space-y-2">
+                         <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                           <Activity className="h-4 w-4 text-indigo-600" />
+                           Status
+                         </label>
+                         <select 
+                           className="w-full h-12 p-3 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500"
+                           value={editForm.isOpen ? "open" : "closed"}
+                           onChange={(e) => setEditForm({...editForm, isOpen: e.target.value === "open"})}
+                         >
+                           <option value="open">🟢 Open</option>
+                           <option value="closed">🔴 Closed</option>
+                         </select>
+                       </div>
+                     </div>
+                     
+                     <div className="mt-6 space-y-2">
+                       <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                         <MessageCircle className="h-4 w-4 text-indigo-600" />
+                         Description
+                       </label>
+                       <textarea 
+                         value={editForm.description}
+                         onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                         className="w-full p-4 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500 h-32 resize-none"
+                         placeholder="Describe your bar's atmosphere, specialties, and what makes it unique..."
+                       />
+                     </div>
+                   </CardContent>
+                 </Card>
+
+                                   {/* Operating Hours Card */}
+                  <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50">
+                    <CardHeader className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white rounded-t-lg relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                      <div className="relative">
+                        <CardTitle className="flex items-center gap-3 text-xl font-bold">
+                          <div className="p-2 bg-white/20 rounded-lg">
+                            <Clock className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold">Operating Hours</div>
+                            <div className="text-green-100 text-sm font-normal">Set your daily schedule</div>
+                          </div>
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                                             <div className="space-y-4">
+                         {Object.entries(editForm.hours).map(([day, hours]) => (
+                           <div key={day} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                             <div className="flex items-center justify-between mb-4">
+                               <span className="font-semibold text-gray-700 text-lg">{day}</span>
+                               <div className="flex items-center gap-3">
+                                 <span className="text-sm text-gray-500">Status:</span>
+                                 <div className="relative">
+                                   <button
+                                     type="button"
+                                     className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+                                       hours !== "Closed" 
+                                         ? "bg-green-500" 
+                                         : "bg-gray-300"
+                                     }`}
+                                     onClick={() => toggleDayStatus(day)}
+                                   >
+                                     <span
+                                       className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
+                                         hours !== "Closed" 
+                                           ? "translate-x-8" 
+                                           : "translate-x-1"
+                                       }`}
+                                     />
+                                   </button>
+                                 </div>
+                                 <span className={`text-sm font-medium ${
+                                   hours !== "Closed" ? "text-green-600" : "text-red-600"
+                                 }`}>
+                                   {hours !== "Closed" ? "Open" : "Closed"}
+                                 </span>
+                               </div>
+                             </div>
+                            
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-600">Opening Time</label>
+                                <select 
+                                  className="w-full p-2 border border-gray-300 rounded-md focus:border-green-500 focus:ring-green-500 bg-white"
+                                  disabled={hours === "Closed"}
+                                >
+                                  <option value="">Select time</option>
+                                  {Array.from({ length: 24 }, (_, i) => {
+                                    const hour = i === 0 ? 12 : i > 12 ? i - 12 : i;
+                                    const ampm = i >= 12 ? 'PM' : 'AM';
+                                    const time = `${hour.toString().padStart(2, '0')}:00 ${ampm}`;
+                                    return (
+                                      <option key={time} value={time}>
+                                        {time}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-600">Closing Time</label>
+                                <select 
+                                  className="w-full p-2 border border-gray-300 rounded-md focus:border-green-500 focus:ring-green-500 bg-white"
+                                  disabled={hours === "Closed"}
+                                >
+                                  <option value="">Select time</option>
+                                  {Array.from({ length: 24 }, (_, i) => {
+                                    const hour = i === 0 ? 12 : i > 12 ? i - 12 : i;
+                                    const ampm = i >= 12 ? 'PM' : 'AM';
+                                    const time = `${hour.toString().padStart(2, '0')}:00 ${ampm}`;
+                                    return (
+                                      <option key={time} value={time}>
+                                        {time}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <div className="mt-3 pt-3 border-t border-gray-200">
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  id={`24h-${day}`}
+                                  className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                                />
+                                <label htmlFor={`24h-${day}`} className="text-sm font-medium text-gray-700">
+                                  24 Hours Open
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Quick Actions */}
+                      <div className="mt-6 pt-4 border-t border-gray-200">
+                        <h4 className="font-semibold text-gray-700 mb-3">Quick Actions</h4>
+                        <div className="flex flex-wrap gap-2">
+                          <button className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors border border-green-200">
+                            Set All Days 9 AM - 5 PM
+                          </button>
+                          <button className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors border border-blue-200">
+                            Set Weekend 10 PM - 2 AM
+                          </button>
+                          <button className="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded-full hover:bg-orange-200 transition-colors border border-orange-200">
+                            Set Weekdays 12 PM - 12 AM
+                          </button>
+                          <button className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors border border-red-200">
+                            Close All Days
+                          </button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                                   {/* Tags & Categories Card */}
+                  <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50">
+                    <CardHeader className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white rounded-t-lg relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                      <div className="relative">
+                        <CardTitle className="flex items-center gap-3 text-xl font-bold">
+                          <div className="p-2 bg-white/20 rounded-lg">
+                            <Tag className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold">Tags & Categories</div>
+                            <div className="text-purple-100 text-sm font-normal">Organize and categorize your bar</div>
+                          </div>
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="space-y-6">
+                        {/* Current Tags Section */}
+                        <div>
+                          <label className="text-sm font-semibold text-gray-700 mb-3 block flex items-center gap-2">
+                            <Tag className="h-4 w-4 text-purple-600" />
+                            Current Tags ({bar.tags.length})
+                          </label>
+                          {bar.tags.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {bar.tags.map((tag, index) => (
+                                <div key={index} className="group relative">
+                                  <Badge 
+                                    variant="outline" 
+                                    className="bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 transition-colors cursor-pointer pr-8"
+                                  >
+                                    {tag}
+                                  </Badge>
+                                  <button 
+                                    className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs hover:bg-red-600"
+                                    onClick={() => console.log('Remove tag:', tag)}
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                              <Tag className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                              <p className="text-sm text-gray-500">No tags added yet</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Add New Tags Section */}
+                        <div>
+                          <label className="text-sm font-semibold text-gray-700 mb-3 block flex items-center gap-2">
+                            <Plus className="h-4 w-4 text-purple-600" />
+                            Add New Tags
+                          </label>
+                          <div className="space-y-3">
+                            <Input 
+                              className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                              placeholder="Type a tag and press Enter (e.g., Live Music, Craft Beer)"
+                            />
+                            <div className="flex flex-wrap gap-2">
+                              <button 
+                                className="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded-full hover:bg-purple-200 transition-colors border border-purple-200"
+                                onClick={() => console.log('Add tag: Live Music')}
+                              >
+                                + Live Music
+                              </button>
+                              <button 
+                                className="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded-full hover:bg-purple-200 transition-colors border border-purple-200"
+                                onClick={() => console.log('Add tag: Craft Beer')}
+                              >
+                                + Craft Beer
+                              </button>
+                              <button 
+                                className="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded-full hover:bg-purple-200 transition-colors border border-purple-200"
+                                onClick={() => console.log('Add tag: Outdoor Seating')}
+                              >
+                                + Outdoor Seating
+                              </button>
+                              <button 
+                                className="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded-full hover:bg-purple-200 transition-colors border border-purple-200"
+                                onClick={() => console.log('Add tag: Happy Hour')}
+                              >
+                                + Happy Hour
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Popular Categories */}
+                        <div>
+                          <label className="text-sm font-semibold text-gray-700 mb-3 block flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-purple-600" />
+                            Popular Categories
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              { name: 'Electronic', icon: '🎵', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+                              { name: 'Traditional', icon: '🏛️', color: 'bg-green-100 text-green-700 border-green-200' },
+                              { name: 'Cocktail Bar', icon: '🍸', color: 'bg-pink-100 text-pink-700 border-pink-200' },
+                              { name: 'Sports Bar', icon: '⚽', color: 'bg-orange-100 text-orange-700 border-orange-200' },
+                              { name: 'Wine Bar', icon: '🍷', color: 'bg-red-100 text-red-700 border-red-200' },
+                              { name: 'Jazz Club', icon: '🎷', color: 'bg-purple-100 text-purple-700 border-purple-200' },
+                            ].map((category) => (
+                              <button
+                                key={category.name}
+                                className={`p-3 rounded-lg border-2 border-dashed hover:border-solid transition-all hover:scale-105 ${category.color} hover:shadow-md`}
+                                onClick={() => console.log('Select category:', category.name)}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="text-lg">{category.icon}</span>
+                                  <span className="font-medium text-sm">{category.name}</span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+               </div>
+
+               {/* Right Column - Additional Settings */}
+               <div className="space-y-6">
+                 {/* Quick Stats Card */}
+                 <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-indigo-50">
+                   <CardHeader>
+                     <CardTitle className="flex items-center gap-2 text-blue-900">
+                       <BarChart3 className="h-5 w-5" />
+                       Quick Stats
+                     </CardTitle>
+                   </CardHeader>
+                   <CardContent className="space-y-4">
+                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                       <span className="text-sm font-medium text-gray-600">Rating</span>
+                       <div className="flex items-center gap-1">
+                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                         <span className="font-semibold">{bar.rating}</span>
+                       </div>
+                     </div>
+                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                       <span className="text-sm font-medium text-gray-600">Reviews</span>
+                       <span className="font-semibold">{bar.reviews}</span>
+                     </div>
+                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                       <span className="text-sm font-medium text-gray-600">Drinks Available</span>
+                       <span className="font-semibold">{bar.availableDrinks}</span>
+                     </div>
+                   </CardContent>
+                 </Card>
+
+                                   
+
+                                   {/* Social Media Card */}
+                  <Card className="shadow-lg border-0 bg-gradient-to-br from-pink-50 to-rose-50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-pink-900">
+                        <Share2 className="h-5 w-5" />
+                        Social Media
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700">Instagram</label>
+                        <Input 
+                          className="border-gray-300 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder="@barname"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700">Facebook</label>
+                        <Input 
+                          className="border-gray-300 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder="facebook.com/barname"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700">TikTok</label>
+                        <Input 
+                          className="border-gray-300 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder="@barname"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700">Website</label>
+                        <Input 
+                          className="border-gray-300 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder="www.barname.com"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+               </div>
+             </div>
+
+             {/* Action Buttons */}
+             <div className="flex justify-center gap-4 pt-6">
+               <Button 
+                 variant="outline" 
+                 onClick={handleCancel} 
+                 className="px-8 py-3 text-lg border-2 hover:bg-gray-50"
+               >
+                 <X className="mr-2 h-5 w-5" />
+                 Cancel Changes
+               </Button>
+               <Button 
+                 onClick={handleSave} 
+                 className="px-8 py-3 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+               >
+                 <Save className="mr-2 h-5 w-5" />
+                 Save All Changes
+               </Button>
+             </div>
+           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm border rounded-xl p-1 mb-8">
@@ -846,61 +1288,13 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
               {/* Menu Items Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bar.availableDrinksMenu.map((drink) => (
-                  <Card key={drink.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="h-48 bg-gray-100 relative">
-                      <img 
-                        src={drink.image} 
-                        alt={drink.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-black/70 text-white border-0">
-                          {drink.category}
-                        </Badge>
-                      </div>
-                    </div>
-                                                              <CardContent className="p-4">
-                        <h4 className="font-semibold text-lg mb-2">{drink.name}</h4>
-                        <p className="text-gray-600 text-sm mb-3">{drink.shortDescription}</p>
-                        
-                        {/* Ingredients - only show if they exist */}
-                        {drink.ingredients && drink.ingredients.trim() !== "" && (
-                          <div className="mb-3">
-                            <p className="text-xs font-medium text-gray-700 mb-1">Ingredients:</p>
-                            <p className="text-xs text-gray-600">{drink.ingredients}</p>
-                          </div>
-                        )}
-                        
-                        <div className="flex justify-between items-center">
-                          <div className="text-sm text-gray-500">
-                            <p>{drink.alcoholPercentage} • {drink.servingSize}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold text-lg">{drink.price}</p>
-                          </div>
-                        </div>
-                                              <div className="flex gap-2 mt-3">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="flex-1"
-                            onClick={() => handleEditMenuItem(drink.id)}
-                          >
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="flex-1"
-                            onClick={() => handleDeleteMenuItem(drink.id)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-1" />
-                            Delete
-                          </Button>
-                        </div>
-                     </CardContent>
-                  </Card>
+                  <DrinkCard
+                    key={drink.id}
+                    {...drink}
+                    onViewDetails={(id) => console.log("View drink details:", id)}
+                    onEdit={(id) => handleEditMenuItem(id)}
+                    onDelete={(id) => handleDeleteMenuItem(id)}
+                  />
                 ))}
               </div>
             </TabsContent>
@@ -920,72 +1314,13 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
               {/* Events Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bar.events.map((event) => (
-                  <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="h-48 bg-gray-100 relative">
-                      <img 
-                        src={event.image} 
-                        alt={event.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 left-2">
-                        {getEventStatusBadge(event.status)}
-                      </div>
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-black/70 text-white border-0">
-                          {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </Badge>
-                      </div>
-                    </div>
-                    <CardContent className="p-4">
-                      <h4 className="font-semibold text-lg mb-2">{event.name}</h4>
-                      <p className="text-gray-600 text-sm mb-3">{event.description}</p>
-                      <div className="space-y-2 mb-3">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <CalendarIcon className="h-4 w-4" />
-                          <span>{event.date} at {event.time}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <MusicIcon className="h-4 w-4" />
-                          <span>{event.dj}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <UsersIcon className="h-4 w-4" />
-                          <span>{event.attendees}/{event.capacity} attendees</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <DollarSignIcon className="h-4 w-4" />
-                          <span>{event.price}</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {event.tags.map((tag, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex-1"
-                          onClick={() => handleEditEvent(event.id)}
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="flex-1"
-                          onClick={() => handleDeleteEvent(event.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Delete
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <EventCard
+                    key={event.id}
+                    {...event}
+                    onViewDetails={(id) => console.log("View event details:", id)}
+                    onEdit={(id) => handleEditEvent(id)}
+                    onDelete={(id) => handleDeleteEvent(id)}
+                  />
                 ))}
               </div>
             </TabsContent>

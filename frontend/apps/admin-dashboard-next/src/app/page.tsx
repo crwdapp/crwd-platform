@@ -1,10 +1,5 @@
-import AdminLayout from "@/components/layout/admin-layout"
-import DashboardContent from "@/components/dashboard/dashboard-content"
+import { redirect } from "next/navigation"
 
-export default function DashboardPage() {
-  return (
-    <AdminLayout>
-      <DashboardContent />
-    </AdminLayout>
-  )
+export default function HomePage() {
+  redirect("/analytics")
 }

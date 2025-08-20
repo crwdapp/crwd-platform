@@ -18,8 +18,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
   BarChart3,
-  Calendar,
-  Home,
   Menu,
   Settings,
   Users,
@@ -30,14 +28,13 @@ import {
   User,
   LogOut,
   Wine,
+  Sparkles,
 } from "lucide-react"
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Home },
-  { name: "Bars", href: "/bars", icon: Building2 },
-  { name: "Events", href: "/events", icon: Calendar },
-  { name: "Users", href: "/users", icon: Users },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Analytics", href: "/analytics", icon: BarChart3, description: "Detailed insights" },
+  { name: "Bars", href: "/bars", icon: Building2, description: "Manage establishments" },
+  { name: "Users", href: "/users", icon: Users, description: "User administration" },
 ]
 
 export default function AdminLayout({
@@ -49,15 +46,25 @@ export default function AdminLayout({
   const pathname = usePathname()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Mobile sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-72 p-0 bg-white/95 backdrop-blur-xl border-r border-white/20">
           <div className="flex h-full flex-col">
-            <div className="flex h-16 items-center justify-between px-4 border-b">
-              <h1 className="text-xl font-bold text-gray-900">CRWD Admin</h1>
+            <div className="flex h-20 items-center justify-between px-6 border-b border-gray-200/50">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    CRWD Admin
+                  </h1>
+                  <p className="text-xs text-gray-500">Platform Management</p>
+                </div>
+              </div>
             </div>
-            <nav className="flex-1 space-y-1 px-2 py-4">
+            <nav className="flex-1 space-y-2 px-4 py-6">
               {navigation.map((item) => {
                 const isActive = pathname === item.href
                 return (
@@ -65,20 +72,28 @@ export default function AdminLayout({
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
+                      "group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200",
                       isActive
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25"
+                        : "text-gray-700 hover:bg-white/80 hover:text-indigo-600 hover:shadow-md"
                     )}
                     onClick={() => setSidebarOpen(false)}
                   >
                     <item.icon
                       className={cn(
-                        "mr-3 h-5 w-5 flex-shrink-0",
-                        isActive ? "text-gray-900" : "text-gray-400"
+                        "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
+                        isActive ? "text-white" : "text-gray-400 group-hover:text-indigo-600"
                       )}
                     />
-                    {item.name}
+                    <div className="flex-1">
+                      <div className="font-semibold">{item.name}</div>
+                      <div className={cn(
+                        "text-xs transition-colors",
+                        isActive ? "text-indigo-100" : "text-gray-500 group-hover:text-indigo-500"
+                      )}>
+                        {item.description}
+                      </div>
+                    </div>
                   </Link>
                 )
               })}
@@ -88,15 +103,25 @@ export default function AdminLayout({
       </Sheet>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
-          <div className="flex h-16 shrink-0 items-center">
-            <h1 className="text-xl font-bold text-gray-900">CRWD Admin</h1>
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white/95 backdrop-blur-xl border-r border-white/20 px-6 pb-4 shadow-xl">
+          <div className="flex h-20 shrink-0 items-center">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  CRWD Admin
+                </h1>
+                <p className="text-xs text-gray-500">Platform Management</p>
+              </div>
+            </div>
           </div>
           <nav className="flex flex-1 flex-col">
-            <ul role="list" className="flex flex-1 flex-col gap-y-7">
+            <ul role="list" className="flex flex-1 flex-col gap-y-2">
               <li>
-                <ul role="list" className="-mx-2 space-y-1">
+                <ul role="list" className="space-y-2">
                   {navigation.map((item) => {
                     const isActive = pathname === item.href
                     return (
@@ -104,19 +129,27 @@ export default function AdminLayout({
                         <Link
                           href={item.href}
                           className={cn(
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors",
+                            "group flex gap-x-3 rounded-xl p-4 text-sm leading-6 font-medium transition-all duration-200",
                             isActive
-                              ? "bg-gray-50 text-indigo-600"
-                              : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                              ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25"
+                              : "text-gray-700 hover:bg-white/80 hover:text-indigo-600 hover:shadow-md"
                           )}
                         >
                           <item.icon
                             className={cn(
-                              "h-6 w-6 shrink-0",
-                              isActive ? "text-indigo-600" : "text-gray-400 group-hover:text-indigo-600"
+                              "h-6 w-6 shrink-0 transition-colors",
+                              isActive ? "text-white" : "text-gray-400 group-hover:text-indigo-600"
                             )}
                           />
-                          {item.name}
+                          <div className="flex-1">
+                            <div className="font-semibold">{item.name}</div>
+                            <div className={cn(
+                              "text-xs transition-colors",
+                              isActive ? "text-indigo-100" : "text-gray-500 group-hover:text-indigo-500"
+                            )}>
+                              {item.description}
+                            </div>
+                          </div>
                         </Link>
                       </li>
                     )
@@ -129,15 +162,15 @@ export default function AdminLayout({
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-72">
         {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-20 shrink-0 items-center gap-x-4 border-b border-white/20 bg-white/80 backdrop-blur-xl px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+                className="-m-2.5 p-2.5 text-gray-700 lg:hidden hover:bg-white/50"
               >
                 <Menu className="h-6 w-6" />
               </Button>
@@ -149,19 +182,19 @@ export default function AdminLayout({
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="relative flex flex-1">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
-                className="block h-full w-full border-0 py-0 pl-10 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                placeholder="Search..."
+                className="block h-full w-full border-0 bg-white/50 rounded-xl py-0 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:bg-white sm:text-sm transition-all duration-200"
+                placeholder="Search anything..."
               />
             </div>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <Button variant="ghost" size="sm" className="relative">
+              <Button variant="ghost" size="sm" className="relative hover:bg-white/50 rounded-xl">
                 <Bell className="h-6 w-6" />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs">
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs bg-gradient-to-r from-red-500 to-pink-500">
                   3
                 </Badge>
               </Button>
@@ -172,33 +205,35 @@ export default function AdminLayout({
               {/* Profile dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-xl hover:bg-white/50">
+                    <Avatar className="h-10 w-10 ring-2 ring-white/20">
                       <AvatarImage src="/avatars/01.png" alt="Admin" />
-                      <AvatarFallback>AD</AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold">
+                        AD
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-64 bg-white/95 backdrop-blur-xl border-white/20" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">Admin User</p>
+                      <p className="text-sm font-semibold leading-none">Admin User</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         admin@crwd.com
                       </p>
                     </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-gray-200/50" />
+                  <DropdownMenuItem className="hover:bg-indigo-50 rounded-lg">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="hover:bg-indigo-50 rounded-lg">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-gray-200/50" />
+                  <DropdownMenuItem className="hover:bg-red-50 rounded-lg text-red-600">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
@@ -209,7 +244,7 @@ export default function AdminLayout({
         </div>
 
         {/* Page content */}
-        <main className="py-10">
+        <main className="py-8">
           <div className="px-4 sm:px-6 lg:px-8">
             {children}
           </div>
