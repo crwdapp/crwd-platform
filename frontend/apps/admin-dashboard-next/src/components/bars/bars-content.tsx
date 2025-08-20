@@ -62,7 +62,8 @@ export default function BarsContent() {
     email: "",
     description: "",
     priceRange: "$$",
-    status: "active"
+    status: "active",
+    capacity: 100
   })
   const router = useRouter()
 
@@ -126,7 +127,8 @@ export default function BarsContent() {
       email: "",
       description: "",
       priceRange: "$$",
-      status: "active"
+      status: "active",
+      capacity: 100
     })
     
     setIsAddBarOpen(false)
@@ -147,9 +149,15 @@ export default function BarsContent() {
 
   // Calculate stats
   const totalBars = bars.length
-  const activeBars = bars.filter(bar => bar.status === "active").length
-  const totalEvents = bars.reduce((sum, bar) => sum + bar.events.length, 0)
-  const averageRating = bars.reduce((sum, bar) => sum + bar.rating, 0) / bars.length
+  const openNowBars = bars.filter(bar => bar.isOpen).length
+  const futureEvents = bars.reduce((sum, bar) => {
+    const today = new Date()
+    const futureEventCount = bar.events.filter(event => {
+      const eventDate = new Date(event.date)
+      return eventDate > today
+    }).length
+    return sum + futureEventCount
+  }, 0)
 
   return (
     <div className="space-y-8">
@@ -176,64 +184,7 @@ export default function BarsContent() {
         </Button>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-blue-600">Total Bars</p>
-                <p className="text-2xl font-bold text-blue-900">{totalBars}</p>
-              </div>
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl">
-                <Building2 className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-100 border-0 shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-green-600">Active Bars</p>
-                <p className="text-2xl font-bold text-green-900">{activeBars}</p>
-              </div>
-              <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl">
-                <Zap className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-50 to-pink-100 border-0 shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-purple-600">Total Events</p>
-                <p className="text-2xl font-bold text-purple-900">{totalEvents}</p>
-              </div>
-              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
-                <Calendar className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-amber-50 to-orange-100 border-0 shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-amber-600">Avg Rating</p>
-                <p className="text-2xl font-bold text-amber-900">{averageRating.toFixed(1)}</p>
-              </div>
-              <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl">
-                <Star className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Search Bar */}
       <div className="relative">
@@ -361,6 +312,17 @@ export default function BarsContent() {
                   placeholder="Enter email address"
                   value={newBarForm.email}
                   onChange={(e) => setNewBarForm({...newBarForm, email: e.target.value})}
+                  className="bg-white/50 border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">Capacity</label>
+                <Input
+                  type="number"
+                  placeholder="Enter maximum capacity"
+                  value={newBarForm.capacity}
+                  onChange={(e) => setNewBarForm({...newBarForm, capacity: parseInt(e.target.value) || 0})}
                   className="bg-white/50 border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>

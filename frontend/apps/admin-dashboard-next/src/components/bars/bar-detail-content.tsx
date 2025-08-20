@@ -161,10 +161,11 @@ const bars = [
          ingredients: "Vodka, Vermouth, Olive"
        },
      ],
-    drinksServedToday: 156,
-    totalTokensRedeemed: 89,
-    lastUpdated: "2024-08-08T15:30:00Z"
-  },
+         drinksServedToday: 156,
+     totalTokensRedeemed: 89,
+     capacity: 200,
+     lastUpdated: "2024-08-08T15:30:00Z"
+   },
   {
     id: 2,
     name: "Old Town",
@@ -227,10 +228,11 @@ const bars = [
          ingredients: ""
        },
      ],
-    drinksServedToday: 89,
-    totalTokensRedeemed: 45,
-    lastUpdated: "2024-08-08T14:20:00Z"
-  }
+         drinksServedToday: 89,
+     totalTokensRedeemed: 45,
+     capacity: 80,
+     lastUpdated: "2024-08-08T14:20:00Z"
+   }
 ]
 
 interface BarDetailContentProps {
@@ -272,7 +274,7 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
     description: bar?.description || "",
     address: bar?.address || "",
     phone: bar?.phone || "",
-    priceRange: bar?.priceRange || "",
+    capacity: bar?.capacity || 200,
     type: bar?.type || "",
     isOpen: bar?.isOpen ?? true,
     lat: bar?.lat || 0,
@@ -391,7 +393,7 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
       description: bar.description,
       address: bar.address,
       phone: bar.phone,
-      priceRange: bar.priceRange,
+      capacity: bar.capacity || 200,
       type: bar.type,
       isOpen: bar.isOpen,
       lat: bar.lat,
@@ -587,14 +589,10 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
                     <MapPinIcon className="h-4 w-4" />
                     <span>{bar.location}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span>{bar.rating}/5 ({bar.reviews} reviews)</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Wine className="h-4 w-4" />
-                    <span>{bar.availableDrinks} drinks available</span>
-                  </div>
+                                     <div className="flex items-center gap-1">
+                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                     <span>{bar.rating}/5 ({bar.reviews} reviews)</span>
+                   </div>
                 </div>
               </div>
             </div>
@@ -711,22 +709,19 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
                            placeholder="+40 XXX XXX XXX"
                          />
                        </div>
-                       <div className="space-y-2">
-                         <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                           <DollarSign className="h-4 w-4 text-indigo-600" />
-                           Price Range
-                         </label>
-                         <select 
-                           className="w-full h-12 p-3 border border-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500"
-                           value={editForm.priceRange}
-                           onChange={(e) => setEditForm({...editForm, priceRange: e.target.value})}
-                         >
-                           <option value="$">$ (Inexpensive)</option>
-                           <option value="$$">$$ (Moderate)</option>
-                           <option value="$$$">$$$ (Expensive)</option>
-                           <option value="$$$$">$$$$ (Very Expensive)</option>
-                         </select>
-                       </div>
+                                               <div className="space-y-2">
+                          <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <Users className="h-4 w-4 text-indigo-600" />
+                            Crowd Capacity
+                          </label>
+                                                     <Input 
+                             type="number"
+                             value={editForm.capacity || ""}
+                             onChange={(e) => setEditForm({...editForm, capacity: parseInt(e.target.value)})}
+                             className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 h-12"
+                             placeholder="e.g., 200"
+                           />
+                        </div>
                        <div className="space-y-2">
                          <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                            <Activity className="h-4 w-4 text-indigo-600" />
@@ -1012,38 +1007,9 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
                   </Card>
                </div>
 
-               {/* Right Column - Additional Settings */}
-               <div className="space-y-6">
-                 {/* Quick Stats Card */}
-                 <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-indigo-50">
-                   <CardHeader>
-                     <CardTitle className="flex items-center gap-2 text-blue-900">
-                       <BarChart3 className="h-5 w-5" />
-                       Quick Stats
-                     </CardTitle>
-                   </CardHeader>
-                   <CardContent className="space-y-4">
-                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                       <span className="text-sm font-medium text-gray-600">Rating</span>
-                       <div className="flex items-center gap-1">
-                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                         <span className="font-semibold">{bar.rating}</span>
-                       </div>
-                     </div>
-                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                       <span className="text-sm font-medium text-gray-600">Reviews</span>
-                       <span className="font-semibold">{bar.reviews}</span>
-                     </div>
-                     <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                       <span className="text-sm font-medium text-gray-600">Drinks Available</span>
-                       <span className="font-semibold">{bar.availableDrinks}</span>
-                     </div>
-                   </CardContent>
-                 </Card>
-
-                                   
-
-                                   {/* Social Media Card */}
+                               {/* Right Column - Additional Settings */}
+                <div className="space-y-6">
+                                    {/* Social Media Card */}
                   <Card className="shadow-lg border-0 bg-gradient-to-br from-pink-50 to-rose-50">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-pink-900">
@@ -1106,7 +1072,7 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
            </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm border rounded-xl p-1 mb-8">
+            <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border rounded-xl p-1 mb-8">
               <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
                 Overview
               </TabsTrigger>
@@ -1116,55 +1082,13 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
               <TabsTrigger value="events" className="rounded-lg data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
                 Events ({bar.events.length})
               </TabsTrigger>
+              <TabsTrigger value="analytics" className="rounded-lg data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
+                Analytics
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-8">
-              {/* Performance Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-blue-600">Available Drinks</p>
-                        <p className="text-2xl font-bold text-blue-900">{bar.availableDrinks}</p>
-                      </div>
-                      <div className="h-12 w-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <Wine className="h-6 w-6 text-white" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-green-600">Drinks Served Today</p>
-                        <p className="text-2xl font-bold text-green-900">{bar.drinksServedToday}</p>
-                      </div>
-                      <div className="h-12 w-12 bg-green-500 rounded-lg flex items-center justify-center">
-                        <Activity className="h-6 w-6 text-white" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-purple-600">Tokens Redeemed</p>
-                        <p className="text-2xl font-bold text-purple-900">{bar.totalTokensRedeemed}</p>
-                      </div>
-                      <div className="h-12 w-12 bg-purple-500 rounded-lg flex items-center justify-center">
-                        <Target className="h-6 w-6 text-white" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Bar Information & Hours */}
+                         <TabsContent value="overview" className="space-y-8">
+               {/* Bar Information & Hours */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <Card className="lg:col-span-2">
                   <CardHeader>
@@ -1179,48 +1103,57 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
                       <p className="text-gray-600">{bar.description}</p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                          <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <Phone className="h-5 w-5 text-indigo-600" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Phone</p>
-                            <p className="font-semibold">{bar.phone}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                          <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <MapPin className="h-5 w-5 text-indigo-600" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Address</p>
-                            <p className="font-semibold">{bar.address}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                          <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <DollarSign className="h-5 w-5 text-indigo-600" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Price Range</p>
-                            <p className="font-semibold">{bar.priceRange}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                          <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <Users className="h-5 w-5 text-indigo-600" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Crowd Level</p>
-                            <Badge className={getCrowdColor(bar.crowdLevel)}>{bar.crowdLevel}</Badge>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <div className="space-y-4">
+                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                           <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                             <Phone className="h-5 w-5 text-indigo-600" />
+                           </div>
+                           <div>
+                             <p className="text-sm font-medium text-gray-600">Phone</p>
+                             <p className="font-semibold">{bar.phone}</p>
+                           </div>
+                         </div>
+                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                           <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                             <MapPin className="h-5 w-5 text-indigo-600" />
+                           </div>
+                           <div>
+                             <p className="text-sm font-medium text-gray-600">Address</p>
+                             <p className="font-semibold">{bar.address}</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div className="space-y-4">
+                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                           <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                             <Users className="h-5 w-5 text-indigo-600" />
+                           </div>
+                           <div>
+                             <p className="text-sm font-medium text-gray-600">Capacity</p>
+                             <p className="font-semibold">{bar.capacity || 'N/A'} people</p>
+                           </div>
+                         </div>
+                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                           <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                             <Users className="h-5 w-5 text-indigo-600" />
+                           </div>
+                           <div>
+                             <p className="text-sm font-medium text-gray-600">Crowd Level</p>
+                             <Badge className={getCrowdColor(bar.crowdLevel)}>{bar.crowdLevel}</Badge>
+                           </div>
+                         </div>
+                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                           <div className="h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                             <Calendar className="h-5 w-5 text-indigo-600" />
+                           </div>
+                           <div>
+                             <p className="text-sm font-medium text-gray-600">Events</p>
+                             <p className="font-semibold">{bar.events.length} upcoming</p>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
 
                     <div>
                       <h4 className="font-semibold mb-3">Tags</h4>
@@ -1253,24 +1186,7 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
                 </Card>
               </div>
 
-              {/* Location Map Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Navigation className="h-5 w-5 text-indigo-600" />
-                    Location
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-600">Map View</p>
-                      <p className="text-sm text-gray-500">{bar.address}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              
             </TabsContent>
 
             <TabsContent value="menu" className="space-y-6">
@@ -1322,6 +1238,154 @@ export default function BarDetailContent({ barId }: BarDetailContentProps) {
                     onDelete={(id) => handleDeleteEvent(id)}
                   />
                 ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-8">
+              {/* Analytics Overview */}
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Bar Analytics</h3>
+                <p className="text-gray-600 mb-8">Comprehensive analytics and insights for {bar.name}</p>
+              </div>
+
+              {/* Key Performance Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                  <CardContent className="p-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-600 mb-2">{bar.totalTokensRedeemed}</div>
+                      <div className="text-sm font-medium text-blue-800">Total Tokens Redeemed</div>
+                      <div className="text-xs text-blue-600 mt-1">lifetime tokens</div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                  <CardContent className="p-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-600 mb-2">{bar.drinksServedToday}</div>
+                      <div className="text-sm font-medium text-green-800">Drinks Served Today</div>
+                      <div className="text-xs text-green-600 mt-1">today's activity</div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                  <CardContent className="p-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-purple-600 mb-2">{bar.events.length}</div>
+                      <div className="text-sm font-medium text-purple-800">Total Events</div>
+                      <div className="text-xs text-purple-600 mt-1">all time events</div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+                  <CardContent className="p-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-orange-600 mb-2">{bar.rating}</div>
+                      <div className="text-sm font-medium text-orange-800">Average Rating</div>
+                      <div className="text-xs text-orange-600 mt-1">out of 5 stars</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Token Analytics */}
+              <div>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Token Analytics</h4>
+                <Card className="shadow-sm border-0">
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-indigo-600 mb-2">{bar.totalTokensRedeemed}</div>
+                        <div className="text-sm font-medium text-gray-800">Total Tokens</div>
+                        <div className="text-xs text-gray-600">Redeemed</div>
+                      </div>
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600 mb-2">{bar.drinksServedToday}</div>
+                        <div className="text-sm font-medium text-gray-800">Today's Tokens</div>
+                        <div className="text-xs text-gray-600">Used</div>
+                      </div>
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600 mb-2">{Math.round(bar.totalTokensRedeemed / Math.max(bar.events.length, 1))}</div>
+                        <div className="text-sm font-medium text-gray-800">Avg Tokens</div>
+                        <div className="text-xs text-gray-600">Per Event</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Popular Menu Items */}
+              <div>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Popular Menu Items</h4>
+                <Card className="shadow-sm border-0">
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      {bar.availableDrinksMenu.slice(0, 5).map((item, index) => (
+                        <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                              <span className="text-sm font-bold text-indigo-600">{index + 1}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{item.name}</p>
+                              <p className="text-sm text-gray-600">{item.category}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold text-gray-900">{item.price}</p>
+                            <p className="text-xs text-gray-500">Popular choice</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Recent Activity */}
+              <div>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h4>
+                <Card className="shadow-sm border-0">
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                        <div className="h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center">
+                          <Activity className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">High token redemption today</p>
+                          <p className="text-sm text-gray-500">Peak hours: 10:00 PM - 2:00 AM</p>
+                        </div>
+                        <span className="text-sm text-gray-500">2 hours ago</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                        <div className="h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <Music className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">New event created</p>
+                          <p className="text-sm text-gray-500">"Electronic Night" scheduled for next week</p>
+                        </div>
+                        <span className="text-sm text-gray-500">1 day ago</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
+                        <div className="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                          <Star className="h-4 w-4 text-purple-600" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">Rating improved</p>
+                          <p className="text-sm text-gray-500">Average rating increased to {bar.rating}</p>
+                        </div>
+                        <span className="text-sm text-gray-500">3 days ago</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
           </Tabs>

@@ -41,6 +41,7 @@ export interface BarCardProps {
   tags: string[]
   events: any[]
   availableDrinks: number
+  capacity?: number
   description?: string
   isOpen?: boolean
   openUntil?: string
@@ -67,6 +68,7 @@ export function BarCard({
   tags,
   events,
   availableDrinks,
+  capacity,
   description,
   isOpen = true,
   openUntil,
@@ -223,8 +225,8 @@ export function BarCard({
              <div className="text-xs text-gray-600">Drinks</div>
            </div>
            <div className="text-center p-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:shadow-md transition-shadow">
-             <div className="text-sm font-bold text-gray-900">{priceRange}</div>
-             <div className="text-xs text-gray-600">Price</div>
+             <div className="text-sm font-bold text-gray-900">{capacity || 'N/A'}</div>
+             <div className="text-xs text-gray-600">Capacity</div>
            </div>
          </div>
 
