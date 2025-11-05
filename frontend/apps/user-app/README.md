@@ -1,4 +1,4 @@
-# CRWDBoltMobile
+# CRWD Mobile
 
 A React Native mobile application built with Expo and TypeScript, migrated from the original CRWDBolt web application.
 

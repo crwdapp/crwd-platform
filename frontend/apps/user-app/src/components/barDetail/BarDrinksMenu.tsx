@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 12,
-    backdropFilter: 'blur(20px)',
   },
   drinkImageContainer: {
     height: screenWidth * 0.65,

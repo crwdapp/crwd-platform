@@ -122,7 +122,6 @@ export const BarLocationMap: React.FC<BarLocationMapProps> = ({ bar }) => {
           style={styles.directionsButton}
           onPress={handleGetDirections}
           activeOpacity={1}
-          underlayColor="transparent"
         >
           <Icon name="navigation" size={18} color="#000000" />
           <Text style={styles.directionsButtonText}>Get Directions</Text>

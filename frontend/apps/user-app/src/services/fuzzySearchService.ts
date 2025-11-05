@@ -1,4 +1,5 @@
 import Fuse from 'fuse.js';
+import type { IFuseOptions, FuseResult } from 'fuse.js';
 import { Bar } from '../types/bar';
 import { allBars } from '../data/barsData';
 import { allDrinks } from '../data/drinks';
@@ -16,7 +17,7 @@ export class FuzzySearchService {
 
   constructor() {
     // Configure Fuse.js for bars
-    const barsFuseOptions: Fuse.IFuseOptions<Bar> = {
+    const barsFuseOptions: IFuseOptions<Bar> = {
       keys: [
         { name: 'name', weight: 0.4 },
         { name: 'type', weight: 0.3 },
@@ -32,7 +33,7 @@ export class FuzzySearchService {
     };
 
     // Configure Fuse.js for drinks
-    const drinksFuseOptions: Fuse.IFuseOptions<any> = {
+    const drinksFuseOptions: IFuseOptions<any> = {
       keys: [
         { name: 'name', weight: 0.5 },
         { name: 'category', weight: 0.3 },
@@ -46,7 +47,7 @@ export class FuzzySearchService {
     };
 
     // Configure Fuse.js for events
-    const eventsFuseOptions: Fuse.IFuseOptions<any> = {
+    const eventsFuseOptions: IFuseOptions<any> = {
       keys: [
         { name: 'name', weight: 0.6 },
         { name: 'dj', weight: 0.4 },
@@ -342,7 +343,7 @@ export class FuzzySearchService {
   /**
    * Calculate relevance score from Fuse.js result
    */
-  private calculateFuzzyRelevance(result: Fuse.FuseResult<any>): number {
+  private calculateFuzzyRelevance(result: FuseResult<any>): number {
     // Fuse.js score is 0-1, where 0 is perfect match
     // Convert to 0-100 scale where 100 is perfect match
     const baseScore = (1 - (result.score || 0)) * 100;

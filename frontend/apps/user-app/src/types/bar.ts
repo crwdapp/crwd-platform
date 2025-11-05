@@ -28,6 +28,7 @@ export interface Bar {
     name: string;
     date: string;
     dj: string;
+    image?: string;
   }>;
   availableDrinksMenu: Array<{
     id: number;

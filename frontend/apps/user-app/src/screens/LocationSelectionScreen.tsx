@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useAppStore } from '../store';
 import { allBars } from '../data/barsData';
+import { Bar } from '../types/bar';
 
 // Helper function to calculate distance between two coordinates (Haversine formula)
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {

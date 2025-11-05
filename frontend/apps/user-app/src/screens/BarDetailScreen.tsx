@@ -272,7 +272,6 @@ export const BarDetailScreen: React.FC = () => {
           setSelectedDrinkId(null);
         }}
         barId={bar.id}
-        drinkId={selectedDrinkId || 0}
       />
     </SafeAreaView>
   );

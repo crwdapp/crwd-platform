@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { searchService, SearchQuery, SearchResult, SearchFilters, SearchCategory } from '../services/searchService';
+export type { SearchCategory } from '../services/searchService';
 import { useAppStore, isStoreReady } from '../store';
 
 export interface UseSearchOptions {
@@ -52,8 +53,8 @@ export const useSearch = (options: UseSearchOptions = {}): UseSearchReturn => {
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
   // Get user preferences from store with error handling
-  let userLocation = null;
-  let userPreferences = { selectedLocation: 'ALL', activeFilters: [], viewMode: 'map', barFilterMode: 'all' };
+  let userLocation: { lat: number; lng: number } | null = null;
+  let userPreferences: { selectedLocation: string; activeFilters: string[]; viewMode: string; barFilterMode: string; eventFilterMode?: string } = { selectedLocation: 'ALL', activeFilters: [], viewMode: 'map', barFilterMode: 'all' };
   
   // Only try to access store if it's ready
   if (isStoreReady()) {

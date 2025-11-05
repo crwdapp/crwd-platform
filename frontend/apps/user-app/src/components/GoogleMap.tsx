@@ -12,8 +12,8 @@ export const GoogleMap: React.FC = () => {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
-          latitude: ui.mapCenter?.latitude || 40.7128,
-          longitude: ui.mapCenter?.longitude || -74.0060,
+          latitude: ui.mapCenter?.lat || 40.7128,
+          longitude: ui.mapCenter?.lng || -74.0060,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -179,12 +179,12 @@ export const GoogleMap: React.FC = () => {
           },
         ]}
       >
-        {bars.map((bar) => (
+        {bars.items.map((bar) => (
           <Marker
             key={bar.id}
             coordinate={{
-              latitude: bar.latitude,
-              longitude: bar.longitude,
+              latitude: bar.lat,
+              longitude: bar.lng,
             }}
             title={bar.name}
             description={bar.description}

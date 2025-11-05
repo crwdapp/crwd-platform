@@ -487,7 +487,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     opacity: 0,
     transform: [{ scale: 0.8 }],
-    transition: 'all 0.2s ease',
   },
   clearButtonVisible: {
     opacity: 1,
@@ -810,11 +809,6 @@ const styles = StyleSheet.create({
     color: '#CCCCCC',
     marginBottom: 2,
     fontWeight: '400',
-  },
-  barName: {
-    fontSize: 13,
-    color: '#5BC0CE',
-    fontWeight: '500',
   },
   resultStatus: {
     alignItems: 'flex-end',

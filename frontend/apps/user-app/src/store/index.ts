@@ -81,6 +81,16 @@ interface Bar {
   lat: number;
   lng: number;
   availableDrinks?: number;
+  availableDrinksMenu?: Array<{
+    id: number;
+    name: string;
+    description: string;
+    category: string;
+    image?: string;
+    alcoholContent?: string;
+    volume?: string;
+    originalPrice?: string;
+  }>;
 }
 
 interface User {
@@ -93,6 +103,7 @@ interface User {
     activeFilters: string[];
     viewMode: string;
     barFilterMode: string;
+    eventFilterMode?: string;
   };
   subscription: {
     status: string;
@@ -158,6 +169,8 @@ interface AppState {
   updateBarsByDistance: () => void;
   updateBarsByCity: (selectedCity: string) => void;
   updateUserLocation: (location: { lat: number; lng: number }) => void;
+  toggleBarFilterMode: () => void;
+  toggleEventFilterMode: () => void;
   
   // Event interaction methods
   bookmarkEvent: (eventId: number) => void;
@@ -195,6 +208,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       activeFilters: [],
       viewMode: 'map',
       barFilterMode: 'open_now',
+      eventFilterMode: 'all',
     },
     subscription: {
       status: 'free',
@@ -214,6 +228,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     loading: false,
     error: null,
     lastFetch: Date.now(),
+    all: realBars,
+    filtered: realBars,
   },
   events: {
     items: [],
@@ -472,6 +488,36 @@ export const useAppStore = create<AppState>((set, get) => ({
       // Re-sort existing bars with new location
       get().updateBarsByDistance();
     }
+  },
+  toggleBarFilterMode: () => {
+    set(state => {
+      const currentMode = state.user.preferences.barFilterMode;
+      const newMode = currentMode === 'open_now' ? 'all' : 'open_now';
+      return {
+        user: {
+          ...state.user,
+          preferences: {
+            ...state.user.preferences,
+            barFilterMode: newMode,
+          },
+        },
+      };
+    });
+  },
+  toggleEventFilterMode: () => {
+    set(state => {
+      const currentMode = state.user.preferences.eventFilterMode || 'all';
+      const newMode = currentMode === 'events_today' ? 'all' : 'events_today';
+      return {
+        user: {
+          ...state.user,
+          preferences: {
+            ...state.user.preferences,
+            eventFilterMode: newMode,
+          },
+        },
+      };
+    });
   },
   
   // Event interaction methods

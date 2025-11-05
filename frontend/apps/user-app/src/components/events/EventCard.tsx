@@ -149,8 +149,7 @@ export const EventCard: React.FC<EventCardProps> = ({
           <Icon 
             name="bookmark" 
             size={20} 
-            color={isBookmarked ? "#5BC0CE" : "#FFFFFF"} 
-            style={isBookmarked ? { fill: 'currentColor' } : {}}
+            color={isBookmarked ? "#5BC0CE" : "#FFFFFF"}
           />
         </TouchableOpacity>
       </View>
